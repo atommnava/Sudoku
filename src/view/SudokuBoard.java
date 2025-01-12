@@ -1,8 +1,15 @@
 package view;
 
+import model.Sudoku;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -26,6 +33,9 @@ public class SudokuBoard extends JPanel {
    private Color txtBackground3;
    private Color txtForeground3;
    
+   private Sudoku sudoku;
+   private ArrayList<JTextField> txtListAux;
+   
    public SudokuBoard(){
        iniciarComponentes();
    }
@@ -43,6 +53,9 @@ public class SudokuBoard extends JPanel {
        txtForeground2 = Color.black;
        txtBackground3 = Color.white;
        txtForeground3 = Color.black;
+       
+       sudoku = new Sudoku();
+       txtListAux = new ArrayList<>();
    }
    
    public void createSudoku(){
@@ -56,8 +69,10 @@ public class SudokuBoard extends JPanel {
    public void createtxtFields(){
        int x = txtMargin;
        int y = txtMargin;
-       for (int i = 0; i < txtList.length; i++) {
-           for (int j = 0; j < txtList[0].length; j++) {
+       int i;
+       int j;
+       for (i = 0; i < txtList.length; i++) {
+           for (j = 0; j < txtList[0].length; j++) {
                JTextField txt = new JTextField();
                this.add(txt);
                txt.setBounds(x, y, txtWidth, txtHeight);
@@ -73,13 +88,112 @@ public class SudokuBoard extends JPanel {
                if ((j + 1 ) % 3 == 0) {
                    x += txtMargin;
                }
-               
+               txtList[i][j] = txt;
+               generateEvents(txt);
            }
            x = txtMargin;
            y += txtHeight;
            
            if ((i + 1) % 3 == 0) {
                y += txtMargin;
+           }
+       }
+   }
+   
+   public void generateEvents(JTextField txt){
+       MouseListener event = new MouseListener() {
+           @Override
+           public void mouseClicked(MouseEvent e) {
+               
+           }
+
+           @Override
+           public void mousePressed(MouseEvent e) {
+               pressed(txt);
+           }
+
+           @Override
+           public void mouseReleased(MouseEvent e) {
+               
+           }
+
+           @Override
+           public void mouseEntered(MouseEvent e) {
+               
+           }
+
+           @Override
+           public void mouseExited(MouseEvent e) {
+              
+           }
+       };
+      
+       KeyListener keyEvent = new KeyListener() {
+           @Override
+           public void keyTyped(KeyEvent e) {
+               
+           }
+
+           @Override
+           public void keyPressed(KeyEvent e) {
+               if (e.getKeyChar() >= 49 && e.getKeyChar() <= 57) {
+                   txt.setText(String.valueOf(e.getKeyChar()));
+               }
+           }
+
+           @Override
+           public void keyReleased(KeyEvent e) {
+              
+           }
+           
+       };
+       txt.addMouseListener(event);
+       txt.addKeyListener(keyEvent);
+   }
+   
+   public void pressed(JTextField txt) {
+       int i;
+       int j;
+       
+       int posI;
+       int posJ;
+       
+       for (JTextField jtxt : txtListAux) {
+           jtxt.setBackground(txtBackground1);
+           jtxt.setForeground(txtForeground1);
+           jtxt.setBorder(BorderFactory.createLineBorder(panelBackground, 1));
+       }
+       txtListAux.clear();
+       
+       for (i = 0; i < txtList.length; i++) {
+           for (j = 0; j < txtList[0].length; j++) {
+               if (txtList[i][j] == txt) {
+                   
+                   for (int k = 0; k < txtList.length; k++) {
+                       txtList[k][j].setBackground(txtBackground2);
+                       txtList[k][j].setForeground(txtForeground2);
+                       txtListAux.add(txtList[k][j]);
+                   }
+                   for (int k = 0; k < txtList[0].length; k++) {
+                       txtList[i][k].setBackground(txtBackground2);
+                       txtList[i][k].setForeground(txtForeground2);
+                       txtListAux.add(txtList[i][k]);
+                   }
+                   posI = sudoku.currentSubquadrant(i);
+                   posJ = sudoku.currentSubquadrant(j);
+                   for (int k = posI - 3; k < posI; k++) {
+                       for (int l = posJ - 3; l < posJ; l++) {
+                           txtList[k][l].setBackground(txtBackground2);
+                           txtList[k][l].setForeground(txtForeground2);
+                           txtListAux.add(txtList[k][l]);
+                       }
+                   }
+                   
+                   txtList[i][j].setBackground(txtBackground3);
+                   txtList[i][j].setForeground(txtForeground3);
+                   txtList[i][j].setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+                   return;
+               }
            }
        }
    }
