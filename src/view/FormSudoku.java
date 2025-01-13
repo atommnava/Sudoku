@@ -9,14 +9,15 @@ import java.awt.Color;
 public class FormSudoku extends javax.swing.JFrame {
     
     private SudokuBoard sudokuBoard;
+    private NumbersBoard numbersBoard;
     
     public FormSudoku() {
         initComponents();
         
-        initComp();
+        iniciarComponentes();
     }
     
-    public void initComp(){
+    public void iniciarComponentes(){
         sudokuBoard = new SudokuBoard();
         sudokuBoard.setTxtHeight(36);
         sudokuBoard.setTxtWidth(36);
@@ -32,9 +33,24 @@ public class FormSudoku extends javax.swing.JFrame {
         sudokuBoard.setTxtBackground3(new Color(203,102,102));
         sudokuBoard.setTxtForeground3(Color.white);
         panelFondo.add(sudokuBoard);
-        sudokuBoard.setLocation(20, 60);
+        sudokuBoard.setLocation(70, 60);
         sudokuBoard.setVisible(true);
         sudokuBoard.createSudoku();
+        
+        numbersBoard = new NumbersBoard();
+        numbersBoard.setTxtWidth(36);
+        numbersBoard.setTxtHeight(36);
+        numbersBoard.setTxtMargin(4);
+        numbersBoard.setTxtFontsize(37);
+        numbersBoard.setPanelBackground(new Color(89, 43, 25));
+        numbersBoard.setTxtBackground1(new Color(239, 229, 216));
+        numbersBoard.setTxtForeground1(new Color(89, 43, 25));
+        numbersBoard.setTxtBackground2(new Color(143, 72, 72));
+        numbersBoard.setTxtForeground2(Color.WHITE);
+        panelFondo.add(numbersBoard);
+        numbersBoard.createBoard();
+        numbersBoard.setLocation(20, 60);
+        numbersBoard.setVisible(true);
     }
 
     /**
@@ -59,17 +75,19 @@ public class FormSudoku extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Sudoku");
         panelFondo.add(jLabel1);
-        jLabel1.setBounds(10, 10, 90, 30);
+        jLabel1.setBounds(30, 20, 90, 30);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelFondo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(panelFondo, javax.swing.GroupLayout.PREFERRED_SIZE, 595, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelFondo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(panelFondo, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
         );
 
         pack();
