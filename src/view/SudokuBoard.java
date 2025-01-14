@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -39,6 +40,7 @@ public class SudokuBoard extends JPanel {
    private Sudoku sudoku;
    private ArrayList<JTextField> txtListAux;
    private ArrayList<JTextField> txtGeneratedList;
+   public JTextField txtSelected;
    
    public SudokuBoard(){
        iniciarComponentes();
@@ -144,8 +146,15 @@ public class SudokuBoard extends JPanel {
 
            @Override
            public void keyPressed(KeyEvent e) {
-               if (e.getKeyChar() >= 49 && e.getKeyChar() <= 57) {
-                   txt.setText(String.valueOf(e.getKeyChar()));
+               if (txtGenerated(txt)) {
+                   return;
+               } else {
+                   if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
+                       txt.setText("");
+                   }
+                   if (e.getKeyChar() >= 49 && e.getKeyChar() <= 57) {
+                       txt.setText(String.valueOf(e.getKeyChar()));
+                      }
                }
            }
 
@@ -184,12 +193,12 @@ public class SudokuBoard extends JPanel {
                    
                    for (int k = 0; k < txtList.length; k++) {
                        txtList[k][j].setBackground(txtBackground2);
-                       txtList[k][j].setForeground(txtForeground2);
+                       // txtList[k][j].setForeground(txtForeground2);
                        txtListAux.add(txtList[k][j]);
                    }
                    for (int k = 0; k < txtList[0].length; k++) {
                        txtList[i][k].setBackground(txtBackground2);
-                       txtList[i][k].setForeground(txtForeground2);
+                       // txtList[i][k].setForeground(txtForeground2);
                        txtListAux.add(txtList[i][k]);
                    }
                    posI = sudoku.currentSubquadrant(i);
@@ -197,7 +206,7 @@ public class SudokuBoard extends JPanel {
                    for (int k = posI - 3; k < posI; k++) {
                        for (int l = posJ - 3; l < posJ; l++) {
                            txtList[k][l].setBackground(txtBackground2);
-                           txtList[k][l].setForeground(txtForeground2);
+                           // txtList[k][l].setForeground(txtForeground2);
                            txtListAux.add(txtList[k][l]);
                        }
                    }
@@ -227,14 +236,69 @@ public class SudokuBoard extends JPanel {
         }
    }
    
+   public boolean createCustomSudoku(){
+       sudoku.cleanSudoku();
+       for (int i = 0; i < txtList.length; i++) {
+           for (int j = 0; j < txtList[0].length; j++) {
+               if (!(txtList[i][j].getText().isEmpty())) {
+                   int num = Integer.valueOf(txtList[i][j].getText());
+                   if (sudoku.columnValidation(j, num) && sudoku.rowValidation(i, num) && sudoku.quadrantValidation(i, j, num)) {
+                       sudoku.getSudoku()[i][j] = Integer.valueOf(txtList[i][j].getText());
+                       txtList[i][j].setBackground(txtBackground4);
+                       txtList[i][j].setForeground(txtForeground4);
+                       txtList[i][j].setBorder(BorderFactory.createLineBorder(panelBackground, 1));
+                       txtGeneratedList.add(txtList[i][j]);
+                   } else {
+                       txtGeneratedList.clear();
+                       JOptionPane.showMessageDialog(null, "Non Solution, try again!", "Error", JOptionPane.ERROR_MESSAGE);
+                       return false;
+                   }
+               } else {
+                   txtList[i][j].setBackground(txtBackground1);
+                   txtList[i][j].setForeground(txtForeground1);
+                   txtList[i][j].setBorder(BorderFactory.createLineBorder(panelBackground, 1));
+               }
+           }
+       }
+       return true;
+   }
+   
    public void txtClean(){
        for (int i = 0; i < txtList.length; i++) {
            for (int j = 0; j < txtList[0].length; j++) {
                txtList[i][j].setText("");
                txtList[i][j].setBackground(txtBackground1);
                txtList[i][j].setForeground(txtForeground1);
+               txtList[i][j].setBorder(BorderFactory.createLineBorder(panelBackground, 1));
            }
        }
+       txtGeneratedList.clear();
+   }
+   
+   public void clean() {
+       for (int i = 0; i < txtList.length; i++) {
+           for (int j = 0; j < txtList[0].length; j++) {
+               boolean b = false;
+               for (JTextField txt : txtGeneratedList) {
+                   if (txtList[i][j] == txt) {
+                       b = true;
+                       break;
+                   }
+               }
+               if (!b) {
+                   txtList[i][j].setText("");
+               } 
+           }
+       }
+   }
+   
+   public boolean txtGenerated(JTextField txt) {
+       for (JTextField jtxt : txtGeneratedList) {
+           if (txt == jtxt) {
+               return true;
+           }
+       }
+       return false;
    }
 
     public void setTxtBackground4(Color txtBackground4) {
