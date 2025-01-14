@@ -300,6 +300,48 @@ public class SudokuBoard extends JPanel {
        }
        return false;
    }
+   
+   public void check(){
+       int sudo[][] = new int [9][9];
+       for (int i = 0; i < txtList.length; i++) {
+           for (int j = 0; j < txtList[0].length; j++) {
+               if (txtList[i][j].getText().isEmpty()) {
+                   JOptionPane.showMessageDialog(null, "Incomplete Sudoku", "Error", JOptionPane.ERROR_MESSAGE);
+                   return;
+               } else {
+                   sudo[i][j] = Integer.parseInt(txtList[i][j].getText());
+               }
+           }
+       }
+       sudoku.setSudoku(sudo);
+       if (sudoku.checkSudoku()) {
+           JOptionPane.showMessageDialog(null, "Complete Sudoku", "Sudoku", JOptionPane.INFORMATION_MESSAGE);
+       } else {
+           JOptionPane.showMessageDialog(null, "No solution for this Sudoku", "ERROR", JOptionPane.ERROR_MESSAGE);
+       }
+   }
+   
+   public void resolve(){
+       sudoku.cleanSudoku();
+       for (int i = 0; i < txtList.length; i++) {
+           for (int j = 0; j < txtList[0].length; j++) {
+               for (JTextField jtxt : txtGeneratedList) {
+                   if (jtxt == txtList[i][j]) {
+                       sudoku.getSudoku()[i][j] = Integer.parseInt(jtxt.getText());
+                   }
+               }
+           }
+       }
+       if (sudoku.resolveSudoku()) {
+           for (int i = 0; i < txtList.length; i++) {
+               for (int j = 0; j < txtList[0].length; j++) {
+                   txtList[i][j].setText(String.valueOf(sudoku.getSudoku()[i][j]));
+               }
+           }
+       } else {
+           JOptionPane.showMessageDialog(null, "No solution for this Sudoku", "ERROR", JOptionPane.ERROR_MESSAGE);
+       }
+   }
 
     public void setTxtBackground4(Color txtBackground4) {
         this.txtBackground4 = txtBackground4;

@@ -23,9 +23,11 @@ public class NumbersBoard extends JPanel {
     private Color txtForeground1;
     private Color txtBackground2;
     private Color txtForeground2;
+    private SudokuBoard sudokuBoard;
     
     public NumbersBoard(){
-        
+        initComp();
+        sudokuBoard = FormSudoku.sudokuBoard;
     }
     
     public void initComp(){
@@ -82,7 +84,10 @@ public class NumbersBoard extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-             
+                if (sudokuBoard.txtGenerated(sudokuBoard.txtSelected)) {
+                    return;
+                }
+                sudokuBoard.txtSelected.setText(txt.getText());
             }
 
             @Override

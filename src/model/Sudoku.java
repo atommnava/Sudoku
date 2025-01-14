@@ -1,29 +1,19 @@
 package model;
 
+import java.util.Random;
+
 /**
  *
  * @author alexandermunoznava
  */
 public class Sudoku {
     private int sudoku[][];
-    public Sudoku(){
-        int sudo[][] = {
-            {0, 6, 0,  1, 0, 4,  0, 5, 0},
-            {0, 0, 8,  3, 0, 5,  6, 0, 0},
-            {2, 0, 0,  0, 0, 0,  0, 0, 1},
-            
-            {8, 0, 0,  4, 0, 7,  0, 0, 6},
-            {0, 0, 6,  0, 0, 0,  3, 0, 0},
-            {7, 0, 0,  9, 0, 1,  0, 0, 4},
-            
-            {5, 0, 0,  0, 0, 0,  0, 0, 2},
-            {0, 0, 7,  2, 0, 6,  9, 0, 0},
-            {0, 4, 0,  5, 0, 8,  0, 7, 0},
-        };
-        sudoku = sudo;
+    public Sudoku() {
+        sudoku = new int[9][9];
+        cleanSudoku();
     }
     
-    public void resolveSudoku(){
+    public boolean resolveSudoku(){
         int i;
         int j;
         int value;
@@ -33,11 +23,15 @@ public class Sudoku {
                     for (value = 1; value <= 9; value++) {
                         if (rowValidation(i, value) && columnValidation(j, value) && quadrantValidation(i, j, value)) {
                             sudoku[i][j] = value;
+                            if (resolveSudoku()) return true;
+                            sudoku[i][j] = 0;                        
                         }
                     }
+                    return false;
                 }
             }
         }
+        return true;
     }
     
     public boolean rowValidation(int row, int value) {
@@ -80,6 +74,95 @@ public class Sudoku {
         if (pos <= 2) return 3;
         else if (pos <= 5) return 6;
         else return 9;
+    }
+    
+    public void printSudoku(){
+        int i;
+        int j;
+        resolveSudoku();
+        for (i = 0; i < sudoku.length; i++) {
+            for (j = 0; j < sudoku[0].length; j++) {
+                System.out.print(sudoku[i][j]);
+                if (!(j == sudoku[0].length - 1)) System.out.print(" - ");
+            }
+            System.out.println();
+        }
+    }
+    
+    public void cleanSudoku() {
+        int i;
+        int j;
+        for (i = 0; i < sudoku.length; i++) {
+            for (j = 0; j < sudoku[0].length; j++) {
+                sudoku[i][j] = 0;
+            }
+        }
+    }
+    
+    public void generateSudoku(int level){
+        cleanSudoku();
+        Random random = new Random();
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int num = random.nextInt(9) + 1;
+                if (quadrantValidation(i, j, num)) {
+                    sudoku[i][j] = num;
+                } else {
+                    j--;
+                }
+            }
+        }
+        
+        for (int i = 3; i < 6; i++) {
+            for (int j = 3; j < 6; j++) {
+                int num = random.nextInt(9) + 1;
+                if (quadrantValidation(i, j, num)) {
+                    sudoku[i][j] = num;
+                } else {
+                    j--;
+                }
+            }
+        }
+        
+        for (int i = 6; i < 9; i++) {
+            for (int j = 6; j < 9; j++) {
+                int num = random.nextInt(9) + 1;
+                if (quadrantValidation(i, j, num)) {
+                    sudoku[i][j] = num;
+                } else {
+                    j--;
+                }
+            }
+        }
+        resolveSudoku();
+        
+        for (int i = 0; i < sudoku.length; i++) {
+            for (int j = 0; j < sudoku[0].length; j++) {
+                int aux = j;
+                int rand = random.nextInt(level + 1);
+                j += rand;
+                
+                for (int k = aux; k < j && k < sudoku.length; k++) {
+                    sudoku[i][k] = 0;
+                }
+            }
+        }
+    }
+    
+    public boolean checkSudoku(){
+        for (int i = 0; i < sudoku.length; i++) {
+            for (int j = 0; j < sudoku[0].length; j++) {
+                int aux = sudoku[i][j];
+                sudoku[i][j] = 0;
+                if (!rowValidation(i, aux) || !columnValidation(j, aux) || !quadrantValidation(i, j, aux)) {
+                    sudoku[i][j] = aux;
+                    return false;
+                }
+                sudoku[i][j] = aux;
+            }
+        }
+        return true;
     }
 
     public void setSudoku(int[][] sudoku) {
