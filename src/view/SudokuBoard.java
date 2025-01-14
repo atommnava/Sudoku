@@ -33,8 +33,12 @@ public class SudokuBoard extends JPanel {
    private Color txtBackground3;
    private Color txtForeground3;
    
+   private Color txtBackground4;
+   private Color txtForeground4;
+   
    private Sudoku sudoku;
    private ArrayList<JTextField> txtListAux;
+   private ArrayList<JTextField> txtGeneratedList;
    
    public SudokuBoard(){
        iniciarComponentes();
@@ -54,8 +58,12 @@ public class SudokuBoard extends JPanel {
        txtBackground3 = Color.white;
        txtForeground3 = Color.black;
        
+       txtBackground4 = Color.red;
+       txtForeground4 = Color.white;
+       
        sudoku = new Sudoku();
        txtListAux = new ArrayList<>();
+       txtGeneratedList = new ArrayList<>();
    }
    
    public void createSudoku(){
@@ -165,6 +173,11 @@ public class SudokuBoard extends JPanel {
        }
        txtListAux.clear();
        
+       for (JTextField jtxt : txtGeneratedList) {
+           jtxt.setBackground(txtBackground4);
+           jtxt.setForeground(txtForeground4);
+       }
+       
        for (i = 0; i < txtList.length; i++) {
            for (j = 0; j < txtList[0].length; j++) {
                if (txtList[i][j] == txt) {
@@ -197,6 +210,48 @@ public class SudokuBoard extends JPanel {
            }
        }
    }
+   
+   public void generateSudoku(int level) {
+       txtClean();
+       sudoku.generateSudoku(level);
+       int[][] generatedSudoku = sudoku.getSudoku();
+       for (int i = 0; i < txtList.length; i++) {
+           for (int j = 0; j < txtList[0].length; j++) {
+               if (generatedSudoku[i][j] != 0) {
+                   txtList[i][j].setText(String.valueOf(generatedSudoku[i][j]));
+                   txtList[i][j].setBackground(txtBackground4);
+                   txtList[i][j].setForeground(txtForeground4);
+                   txtGeneratedList.add(txtList[i][j]);
+               }
+           }
+        }
+   }
+   
+   public void txtClean(){
+       for (int i = 0; i < txtList.length; i++) {
+           for (int j = 0; j < txtList[0].length; j++) {
+               txtList[i][j].setText("");
+               txtList[i][j].setBackground(txtBackground1);
+               txtList[i][j].setForeground(txtForeground1);
+           }
+       }
+   }
+
+    public void setTxtBackground4(Color txtBackground4) {
+        this.txtBackground4 = txtBackground4;
+    }
+
+    public void setTxtForeground4(Color txtForeground4) {
+        this.txtForeground4 = txtForeground4;
+    }
+
+    public Color getTxtBackground4() {
+        return txtBackground4;
+    }
+
+    public Color getTxtForeground4() {
+        return txtForeground4;
+    }
 
     public JTextField[][] getTxtList() {
         return txtList;
